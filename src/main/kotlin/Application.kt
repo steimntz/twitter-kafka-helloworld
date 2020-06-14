@@ -5,6 +5,7 @@ import org.apache.kafka.clients.producer.ProducerConfig.*
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
 import org.slf4j.LoggerFactory
+import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.Properties as p
 
@@ -17,11 +18,12 @@ val kafkaProperties = p().also {
 val logger = LoggerFactory.getLogger("MAIN")
 
 fun main(args: Array<String>) {
+    val arguments: Queue<String> = LinkedList(args.toList())
     val latch = CountDownLatch(1)
 
     val kafkaProducer = KafkaProducer<String, String>(kafkaProperties)
 
-    TwitterThread(args[0], args[1], args[2], args[3], latch) { msg ->
+    TwitterThread(arguments.poll(), arguments.poll(), arguments.poll(), arguments.poll(), arguments.toList(), latch) { msg ->
         val record = ProducerRecord<String, String>("twitter", msg)
         kafkaProducer.send(record) { metadata, ex ->
             if (ex == null) {

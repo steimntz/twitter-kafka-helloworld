@@ -10,7 +10,7 @@ import java.lang.Exception
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.LinkedBlockingQueue
 
-class TwitterThread(val consumerKey: String, val consumerSecret: String, val token: String, val tokenSecret: String, val latch: CountDownLatch, val onMsgReceived: (String) -> Unit) : Runnable {
+class TwitterThread(val consumerKey: String, val consumerSecret: String, val token: String, val tokenSecret: String, val terms: List<String>, val latch: CountDownLatch, val onMsgReceived: (String) -> Unit) : Runnable {
 
     val logger = LoggerFactory.getLogger(TwitterThread::class.java)
 
@@ -20,7 +20,7 @@ class TwitterThread(val consumerKey: String, val consumerSecret: String, val tok
         val hoseBirdHosts = HttpHosts(Constants.STREAM_HOST)
         val endPoint = StatusesFilterEndpoint()
 
-        endPoint.trackTerms(listOf("PC Siqueira"))
+        endPoint.trackTerms(terms)
 
         val oAuth = OAuth1(consumerKey, consumerSecret, token, tokenSecret)
         val builder = ClientBuilder()
